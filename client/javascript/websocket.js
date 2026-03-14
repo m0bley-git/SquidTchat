@@ -1,0 +1,18 @@
+//Ouvre une connexion directe avec le serveur.
+const socket = new WebSocket ("ws://localhost:8080");
+
+//Attend la connexion et une fois connecte previens dans le terminal JS et envoie un message au serveur.
+socket.onopen = () => {
+    console.log("Connecte au serveur");
+    socket.send("Salut le backend");
+};
+
+//Des que le serveur envoie un message il s'affiche dans le terminal JS.
+socket.onmessage = (event) => {
+    console.log("Reponse du serveur : ", event.data);
+};
+
+//Affiche dans le terminal JS quand la connexion avec le serveur est coupee
+socket.onclose = () => {
+    console.log("Connexion perdu");
+};

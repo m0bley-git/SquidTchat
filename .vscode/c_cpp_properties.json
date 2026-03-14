@@ -1,0 +1,27 @@
+// Ce fichier indique à VS Code où trouver les headers Qt pour éviter les erreurs rouges. Il ne compile pas le code.
+
+{
+  "configurations": [
+    {
+      "name": "Win32",
+      "includePath": [
+        "${workspaceFolder}/**",
+        "C:/Qt/6.10.1/mingw_64/include",
+        "C:/Qt/6.10.1/mingw_64/include/QtCore",
+        "C:/Qt/6.10.1/mingw_64/include/QtNetwork",
+        "C:/Qt/6.10.1/mingw_64/include/QtWebSockets"
+      ],
+      "defines": [
+        "_DEBUG",
+        "UNICODE",
+        "_UNICODE"
+      ],
+      "windowsSdkVersion": "10.0.26100.0",
+      "compilerPath": "C:/Qt/Tools/mingw1310_64/bin/g++.exe",
+      "cStandard": "c17",
+      "cppStandard": "c++17",
+      "intelliSenseMode": "windows-gcc-x64"
+    }
+  ],
+  "version": 4
+}
