@@ -7,9 +7,9 @@
 ## 🛠 Technologies
 <div align="center">
 
-| 🖥 Frontend | ⚙️ Backend | 🔀 Versionnage | 🖊️ IDE | 🪟 OS de développement |
+| 🖥 Frontend | ⚙️ Backend | 🔀 Versionnage | 🖊️ IDE | 🐳 Déploiement |
 |:---:|:---:|:---:|:---:|:---:|
-| ![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=flat-square&logo=html5&logoColor=white) ![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=flat-square&logo=css3&logoColor=white) ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=javascript&logoColor=black) | ![C++](https://img.shields.io/badge/C%2B%2B-00599C?style=flat-square&logo=cplusplus&logoColor=white) ![Qt](https://img.shields.io/badge/Qt-41CD52?style=flat-square&logo=qt&logoColor=white) ![SQLite](https://img.shields.io/badge/SQLite-003B57?style=flat-square&logo=sqlite&logoColor=white) | ![Git](https://img.shields.io/badge/Git-F05032?style=flat-square&logo=git&logoColor=white) ![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github&logoColor=white) | ![QtCreator](https://img.shields.io/badge/Qt%20Creator-41CD52?style=flat-square&logo=qt&logoColor=white) ![VSCode](https://img.shields.io/badge/VSCode-007ACC?style=flat-square&logo=visualstudiocode&logoColor=white) | ![Windows](https://img.shields.io/badge/Windows-0078D6?style=flat-square&logo=windows&logoColor=white) |
+| ![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=flat-square&logo=html5&logoColor=white) ![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=flat-square&logo=css3&logoColor=white) ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=javascript&logoColor=black) | ![C++](https://img.shields.io/badge/C%2B%2B-00599C?style=flat-square&logo=cplusplus&logoColor=white) ![Qt](https://img.shields.io/badge/Qt-41CD52?style=flat-square&logo=qt&logoColor=white) ![SQLite](https://img.shields.io/badge/SQLite-003B57?style=flat-square&logo=sqlite&logoColor=white) | ![Git](https://img.shields.io/badge/Git-F05032?style=flat-square&logo=git&logoColor=white) ![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github&logoColor=white) | ![QtCreator](https://img.shields.io/badge/Qt%20Creator-41CD52?style=flat-square&logo=qt&logoColor=white) ![VSCode](https://img.shields.io/badge/VSCode-007ACC?style=flat-square&logo=visualstudiocode&logoColor=white) | ![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=docker&logoColor=white) |
 
 </div>
 
@@ -27,12 +27,35 @@
     │   ├── src/             # Code source C++ (.cpp, .h, .pro)
     │   └── database/        # Base de données SQLite (.db)
     │
+    ├── docker/              # Configuration Docker (Dockerfile, docker-compose.yml)
     ├── docs/                # Documentation du projet (.pdf)
     ├── tasks/               # Journaux d'activité individuels (.xlsx)
     ├── .gitignore
     └── README.md
 
-## 👨‍🎓 Étudiants
+## 🚀 Déploiement
+
+> ⚠️ En cours de développement — pas encore fonctionnel.
+
+Le projet est prévu pour être déployé via Docker.
+
+Une fois finalisé, lancer le projet avec :
+```bash
+docker-compose -f docker/docker-compose.yml up
+```
+
+Pour lancer en arrière-plan :
+```bash
+docker-compose -f docker/docker-compose.yml up -d
+```
+
+Pour arrêter :
+```bash
+docker-compose -f docker/docker-compose.yml down
+```
+
+## 👨‍💻 Développeurs
+<div align="center">
 <table>
   <tr>
     <td align="center">
@@ -55,6 +78,7 @@
     </td>
   </tr>
 </table>
+</div>
 
 ---
 
