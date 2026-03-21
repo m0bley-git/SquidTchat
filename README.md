@@ -27,7 +27,7 @@
     │   ├── src/             # Code source C++ (.cpp, .h, .pro)
     │   └── database/        # Base de données SQLite (.db)
     │
-    ├── docker/              # Configuration Docker (Dockerfile, docker-compose.yml)
+    ├── docker/              # Configuration Docker (Dockerfile, .yml)
     ├── docs/                # Documentation du projet (.pdf)
     ├── tasks/               # Journaux d'activité individuels (.xlsx)
     ├── .gitignore
