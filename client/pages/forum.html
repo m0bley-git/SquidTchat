@@ -4,26 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SquidTchat | Forum</title>
+    <link rel="stylesheet" href="../css/forum.css">
 </head>
 <body>
-    <img src="../img/favicon.png" alt="Logo">
 
-    <div class="messages">
-
+    <div class="header">
+        <div class="logo"><img src="../img/favicon.png" alt=""></div>
     </div>
 
-    <input class="saisie" type="text" placeholder="Entrer votre message...">
-    <button onclick="envoyerMessage()">
-        ->
-    </button>
+    <div class="messages"></div>
 
-    <a href="../pages/messages.html">
-        <button>
-            MP
-        </button>
-    </a>
+    <div class="input-bar">
+        <div class="input-wrapper">
+            <input class="saisie" type="text" placeholder="Entrer votre message...">
+            <button class="btn-fleche" onclick="envoyerMessage()">
+                ➜
+            </button>
+        </div>
+        <a href="../pages/messages.html" class="btn-mp">MP</a>
+    </div>
 
+    <script src="../javascript/chat.js"></script>
     <script src="../javascript/auth.js"></script>
-    <script src="../javascript/websocket.js"></script>
 </body>
 </html>

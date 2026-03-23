@@ -29,7 +29,7 @@
     │
     ├── docker/              # Configuration Docker (Dockerfile, .yml)
     ├── docs/                # Documentation du projet (.pdf)
-    ├── tasks/               # Journaux d'activité individuels (.xlsx)
+    ├── tasks/               # Journaux d'activité individuels (.xlsx, .docx)
     ├── .gitignore
     └── README.md
 

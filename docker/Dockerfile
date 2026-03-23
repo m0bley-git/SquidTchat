@@ -2,7 +2,6 @@
 FROM debian:bullseye-slim
 
 # ============================================================
-# Choisir une version de Qt en décommentant la bonne section
 
 # --- Qt 6 (actif) ---
 RUN apt-get update && apt-get install -y \
