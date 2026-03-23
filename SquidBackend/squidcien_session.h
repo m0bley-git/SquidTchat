@@ -22,6 +22,7 @@ public:
     void add_MP_in_Histroy(QString frome_User_name,QString message);
     void sendMessage(const QString &message);
     void get_autentifier();
+    QString sendError(const QString &source_error, const QString &type);
 signals:
     void signal_autentifier(QString user_name );
 private:
