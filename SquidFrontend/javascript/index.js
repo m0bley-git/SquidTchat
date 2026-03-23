@@ -1,7 +1,7 @@
 // On récupère le texte où l'utilisateur tape son pseudo.
 const input = document.querySelector(".pseudo");
 
-//// On récupère le bouton pour passer a la page forum.
+// On récupère le bouton pour passer a la page forum.
 const lien = document.querySelector(".btn");
 
 // Le navigateur surveille le moment où l'utilisateur clique sur le lien pour empecher de changer de page.
@@ -29,9 +29,19 @@ lien.addEventListener("click", (e) => {
 
             console.log("Message envoyé : ", message);
             socket.send(message);
+        };
 
-            // Redirige seulement après l'envoi
-            window.location.href = "pages/forum.html";
+        // Le serveur répond avec le résultat
+        socket.onmessage = (event) => {
+            const reponse = JSON.parse(event.data);
+            if (reponse.payload.status === "ok") {
+                // Pseudo accepté → redirige
+                window.location.href = "pages/forum.html";
+
+            } else if (reponse.payload.status === "error") {
+                // Pseudo refusé → affiche la raison
+                document.querySelector(".erreur").textContent = reponse.payload.raison;
+            }
         };
     }
 });

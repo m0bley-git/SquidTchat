@@ -82,7 +82,7 @@ void Squidcien_session::sendMessage(const QString &message)
 
 bool Squidcien_session::pseudo_autorise(const QString pseudo) {
 
-    const std::vector<QString> interdits = {"admin", "root", "moderateur"}; // Création de la liste interdite
+    const std::vector<QString> interdits = {"admin", "root", "moderateur"};  // Création de la liste interdite
 
     for (const QString& mot : interdits) { // Comparaison : pseudo / liste interdite
 
