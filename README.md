@@ -16,20 +16,19 @@
 ## 📁 Structure du projet
 
     SquidTchat/
-    ├── client/              # Frontend (HTML, CSS, JavaScript)
+    ├── SquidFrontend/       # Frontend (HTML, CSS, JavaScript)
     │   ├── css/             # Feuilles de style (.css)
     │   ├── font/            # Polices d'écriture
     │   ├── img/             # Images et icônes
     │   ├── javascript/      # Scripts JavaScript (.js)
     │   └── pages/           # Pages HTML (.html)
     │
-    ├── SquidBackend/              # Backend (C++/Qt)
-    │                              # Code source C++ (.cpp, .h, .pro)
-    │
+    ├── SquidBackend/        # Backend (C++/Qt)
+    │   └── src/             # Code source C++ (.cpp, .h, .pro)
     │
     ├── docker/              # Configuration Docker (Dockerfile, .yml)
     ├── docs/                # Documentation du projet (.pdf)
-    ├── tasks/               # Journaux d'activité individuels (.xlsx, .docx)
+    ├── planning/            # Journaux d'activité individuels (.xlsx)
     ├── .gitignore
     └── README.md
 
@@ -59,21 +58,24 @@ docker-compose -f docker/docker-compose.yml down
 <table>
   <tr>
     <td align="center">
-      <a href="https://github.com/m0bley-git">
+      <a href="https://github.com/m0bley-git" style="text-decoration: none;">
         <img src="https://github.com/m0bley-git.png" width="100px;" alt="m0bley-git"/><br />
-        <sub><b>Wilstan</b></sub>
+        <sub><b>Wilstan</b></sub><br/>
+        <sub>Dev Frontend</sub>
       </a>
     </td>
     <td align="center">
-      <a href="https://github.com/jr534">
+      <a href="https://github.com/jr534" style="text-decoration: none;">
         <img src="https://github.com/jr534.png" width="100px;" alt="jr534"/><br />
-        <sub><b>Jean</b></sub>
+        <sub><b>Jean</b></sub><br/>
+        <sub>Dev Backend</sub>
       </a>
     </td>
     <td align="center">
-      <a href="https://github.com/raphaelmariet">
+      <a href="https://github.com/raphaelmariet" style="text-decoration: none;">
         <img src="https://github.com/raphaelmariet.png" width="100px;" alt="raphaelmariet"/><br />
-        <sub><b>Raphael</b></sub>
+        <sub><b>Raphael</b></sub><br/>
+        <sub>Dev Backend</sub>
       </a>
     </td>
   </tr>
