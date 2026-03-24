@@ -15,10 +15,8 @@ lien.addEventListener("click", (e) => {
 
         // Connexion WebSocket et envoi du pseudo au serveur
         const socket = new WebSocket("ws://localhost:1234");
-
         socket.onopen = () => {
             console.log("Connecte au serveur");
-
             const message = JSON.stringify({
                 type: "auth/register",
                 timestamp: new Date().toISOString(),
@@ -26,22 +24,24 @@ lien.addEventListener("click", (e) => {
                     pseudo: input.value.trim()
                 }
             });
-
             console.log("Message envoyé : ", message);
             socket.send(message);
         };
 
-        // Le serveur répond avec le résultat
+        // Le serveur répond avec le résultat.
         socket.onmessage = (event) => {
-            const reponse = JSON.parse(event.data);
-            if (reponse.payload.status === "ok") {
-                // Pseudo accepté → redirige
-                window.location.href = "pages/forum.html";
-
-            } else if (reponse.payload.status === "error") {
-                // Pseudo refusé → affiche la raison
-                document.querySelector(".erreur").textContent = reponse.payload.raison;
+            try {
+                const reponse = JSON.parse(event.data);
+                if (reponse.type === "auth/ack" && reponse.payload.status === "error") {
+                    // Pseudo refusé → affiche la raison
+                    document.querySelector(".erreur").textContent = reponse.payload.reason;
+                    return;
+                }
+            } catch (e) {
+                // La réponse n'est pas du JSON on ignore.
             }
+            // Tout autre réponse que erreur on redirige.
+            window.location.href = "pages/forum.html";
         };
     }
 });
