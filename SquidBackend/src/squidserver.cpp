@@ -34,12 +34,36 @@ QWebSocket *pSocket = m_pserver->nextPendingConnection();
     if (pSocket){
     qDebug() << "nouvaux Squid Client";
     m_pnewclient = new Squidcien_session(pSocket);
-    connect(m_pnewclient,&Squidcien_session::signal_autentifier,this,&sortir_attente);
+
+    connect(m_pnewclient,&Squidcien_session::signal_autentifier,this,&SquidServer::user_name_already_use);
+    connect(this, &SquidServer::signal_user_name_status,
+            m_pnewclient, &Squidcien_session::user_data_update);
+
     User_No_autentifier.append(m_pnewclient);
     qDebug() << "Le nouvaux est passer dans la fille d'attant";
     }
 }
+void SquidServer::user_name_already_use (QString User_name){
+    bool value = false;
+    if (User_autentifier.contains(User_name))
+    {
+        // Cas 1 : USER NAME déjà utilisée
+        // puis renvoyer une erreur au client
+        value = true;
+        emit(signal_user_name_status(value,User_name));
+    }
+    else
+    {
+        // Cas 2 : USER NAME introuvable → nouveau user, on peut l'enregistrer
+        // puis créer la session et l'insérer dans la map
+        Squidcien_session* client_actuel = qobject_cast<Squidcien_session*>(sender());
 
-void SquidServer::sortir_attente (QString User_name){
-    qDebug() <<  User_name;
+        if (client_actuel) {
+            User_autentifier.insert(User_name, client_actuel);
+        }
+
+        emit(signal_user_name_status(value,User_name));
+
+
+    }
 }

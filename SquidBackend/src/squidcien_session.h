@@ -33,9 +33,10 @@ private:
     QMap <QString,QStringList> m_MP_histroy;
 
 
-private slots:
-        void onMessageReceived(const QString &message);
-
+ private slots:
+    void onMessageReceived(const QString &message);
+public slots:
+    void user_data_update(bool server_status,QString User_name);
 };
 
 #endif // SQUIDCIEN_SESSION_H

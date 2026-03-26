@@ -15,8 +15,10 @@ class SquidServer : public QObject
 public:
     explicit SquidServer(QObject *parent = nullptr);
     void start_SquidServer (int porte);
+signals:
+    void signal_user_name_status(bool status ,QString User_name);
 private:
-    void sortir_attente (QString User_name);
+    void user_name_already_use (QString User_name);
     QWebSocketServer *m_pserver;
     Squidcien_session *m_pnewclient;
     int porte;

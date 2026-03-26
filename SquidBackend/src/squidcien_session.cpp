@@ -16,6 +16,7 @@ Squidcien_session::Squidcien_session(QWebSocket *pclient, QObject *parent){
     m_pclient=pclient;
     m_User_name="";
     connect(m_pclient, &QWebSocket::textMessageReceived, this, &Squidcien_session::onMessageReceived);
+    //a fix pour le nom user deja utiliser \/
 
 
 }
@@ -25,6 +26,7 @@ void Squidcien_session::onMessageReceived(const QString &message)
     qDebug() << "Message reçu du Squid Client :" << message;
     // début trantement JSON
     QString reponc="";
+    QString pseudo="";
     QJsonDocument doc = QJsonDocument::fromJson(message.toUtf8());
     if (doc.isNull() || !doc.isObject()) {
         reponc = "Erreur : Le JSON est corrompu ou mal formé ou vide.";
@@ -38,15 +40,11 @@ void Squidcien_session::onMessageReceived(const QString &message)
             QJsonObject payload = root["payload"].toObject();
 
             // 4. Extraction du pseudo final
-            QString pseudo = payload["pseudo"].toString();
+            pseudo = payload["pseudo"].toString();
 
 
             if ( pseudo_autorise(pseudo)){
             qDebug() << "Nouvelle tentative d'inscription pour :" << pseudo;
-            // C'est ici que tu appuies sur le bouton "Valider"
-            m_User_name=pseudo;
-            m_autentifier=true;
-            emit signal_autentifier(m_User_name);
         }else {
             reponc="Erreur : Le nom d'utilsatuer n'est pas au norme de la platforme";
 
@@ -64,9 +62,43 @@ void Squidcien_session::onMessageReceived(const QString &message)
 
     }else{
     //fin trantement JSON
-    sendMessage("salut tous vas bien");
+    // C'est ici que tu appuies sur le bouton "Valider"
+    m_User_name=pseudo;
+    emit signal_autentifier(m_User_name);
     }
     //fonction de RAHAEL
+}
+
+void Squidcien_session::user_data_update(bool server_status,QString User_name){
+    if (User_name==m_User_name && m_autentifier==false ){
+    if(server_status){
+            //traiter erreur
+            QString reponc="Erreur : le nom d'utilisateur est deja utiliser";
+            QString type = "auth/ack";
+            QString message = sendError(reponc,type);
+            sendMessage(message);
+            qDebug() << "L'utilisateur " << m_User_name << "et rejeter car le nom d'utilisateur est deja utiliser ";
+
+
+    }else{
+
+        m_autentifier=true;
+        qDebug() << "L'utilisateur " << m_User_name << " est désormais authentifié";
+        QJsonObject payload;
+        payload["status"] = "ok";
+        payload["pseudo"] = m_User_name;
+
+        QJsonObject root;
+        root["type"] = "auth/ack";
+        root["timestamp"] = "2026-03-20T14:32:01Z"; // Idéalement : QDateTime::currentDateTime().toString(Qt::ISODate)
+        root["payload"] = payload;
+
+        QJsonDocument doc(root);
+        QString jsonString = QString::fromUtf8(doc.toJson(QJsonDocument::Compact));
+
+        sendMessage(jsonString);
+    }
+    }
 }
 
 void Squidcien_session::sendMessage(const QString &message)
