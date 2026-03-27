@@ -4,14 +4,23 @@
 
 </div>
 
+<div align="center">
+
+![Status](https://img.shields.io/badge/Status-En%20développement-orange?style=flat-square)
+![Platform](https://img.shields.io/badge/Platform-Web-lightgrey?style=flat-square)
+![WebSocket](https://img.shields.io/badge/Protocol-WebSocket-6C63FF?style=flat-square)
+
+</div>
+
 ## 🛠 Technologies
 <div align="center">
 
 | 🖥 Frontend | ⚙️ Backend | 🔀 Versionnage | 🖊️ IDE | 🐳 Déploiement |
 |:---:|:---:|:---:|:---:|:---:|
-| ![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=flat-square&logo=html5&logoColor=white) ![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=flat-square&logo=css3&logoColor=white) ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=javascript&logoColor=black) | ![C++](https://img.shields.io/badge/C%2B%2B-00599C?style=flat-square&logo=cplusplus&logoColor=white) ![Qt](https://img.shields.io/badge/Qt-41CD52?style=flat-square&logo=qt&logoColor=white) ![SQLite](https://img.shields.io/badge/SQLite-003B57?style=flat-square&logo=sqlite&logoColor=white) | ![Git](https://img.shields.io/badge/Git-F05032?style=flat-square&logo=git&logoColor=white) ![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github&logoColor=white) | ![QtCreator](https://img.shields.io/badge/Qt%20Creator-41CD52?style=flat-square&logo=qt&logoColor=white) ![VSCode](https://img.shields.io/badge/VSCode-007ACC?style=flat-square&logo=visualstudiocode&logoColor=white) | ![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=docker&logoColor=white) |
+| [![Frontend](https://skillicons.dev/icons?i=html,css,js)](https://skillicons.dev) | [![Backend](https://skillicons.dev/icons?i=cpp,qt)](https://skillicons.dev) | [![Git](https://skillicons.dev/icons?i=git,github)](https://skillicons.dev) | [![IDE](https://skillicons.dev/icons?i=vscode)](https://skillicons.dev) | [![Docker](https://skillicons.dev/icons?i=docker)](https://skillicons.dev) |
 
 </div>
+
 
 ## 📁 Structure du projet
 
@@ -32,26 +41,31 @@
     ├── .gitignore
     └── README.md
 
+## 🌿 Structure des branches
+
+    SquidTchat/
+    ├── main          # Branche principale de développement
+    └── main-backup   # Sauvegarde de la branche main
+
 ## 🚀 Déploiement
 
 > ⚠️ En cours de développement — pas encore fonctionnel.
 
-Le projet est prévu pour être déployé via Docker.
+Le projet est prévu pour être déployé via **Docker**. Assurez-vous d'avoir [Docker Desktop](https://www.docker.com/products/docker-desktop) installé sur votre machine.
 
-Une fois finalisé, lancer le projet avec :
-```bash
-docker-compose -f docker/docker-compose.yml up
-```
+### Commandes
 
-Pour lancer en arrière-plan :
-```bash
-docker-compose -f docker/docker-compose.yml up -d
-```
+| Action | Commande |
+|:---|:---|
+| Lancer le projet | `docker-compose -f docker/docker-compose.yml up` |
+| Lancer en arrière-plan | `docker-compose -f docker/docker-compose.yml up -d` |
+| Arrêter le projet | `docker-compose -f docker/docker-compose.yml down` |
 
-Pour arrêter :
-```bash
-docker-compose -f docker/docker-compose.yml down
-```
+## 🌐 Architecture réseau
+
+<div align="center">
+  <img src="/SquidFrontend/img/architecture_reseau.png" alt="Architecture réseau SquidTchat" width="800"/>
+</div>
 
 ## 👨‍💻 Développeurs
 <div align="center">

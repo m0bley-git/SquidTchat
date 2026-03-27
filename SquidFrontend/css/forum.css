@@ -51,7 +51,7 @@ body {
     flex: 1;
     display: flex;
     align-items: stretch;
-    border-radius: 10px;
+    border-radius: 20px;
     overflow: hidden;
 }
 
