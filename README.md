@@ -12,6 +12,14 @@
 
 </div>
 
+## 💬 C'est quoi SquidTchat ?
+
+SquidTchat est une application de messagerie en temps réel développée dans le cadre d'un projet scolaire.
+
+Elle permet à plusieurs utilisateurs connectés sur un même réseau local de communiquer via un tchat général et des messages privés.
+
+Le tout propulsé par une communication WebSocket entre un frontend web et un serveur C++/Qt.
+
 ## 🛠 Technologies
 <div align="center">
 
@@ -47,13 +55,21 @@
     ├── main          # Branche principale de développement
     └── main-backup   # Sauvegarde de la branche main
 
-## 🚀 Déploiement
+## 🔧 Installation
 
+### Prérequis
+Assurez-vous d'avoir installé sur votre machine :
+- [Git](https://git-scm.com/downloads)
+- [Docker Desktop](https://www.docker.com/products/docker-desktop)
+
+### Cloner le dépôt
+```bash
+git clone https://github.com/m0bley-git/SquidTchat.git
+cd SquidTchat
+```
+
+### Lancer le projet
 > ⚠️ En cours de développement — pas encore fonctionnel.
-
-Le projet est prévu pour être déployé via **Docker**. Assurez-vous d'avoir [Docker Desktop](https://www.docker.com/products/docker-desktop) installé sur votre machine.
-
-### Commandes
 
 | Action | Commande |
 |:---|:---|
@@ -61,10 +77,16 @@ Le projet est prévu pour être déployé via **Docker**. Assurez-vous d'avoir [
 | Lancer en arrière-plan | `docker-compose -f docker/docker-compose.yml up -d` |
 | Arrêter le projet | `docker-compose -f docker/docker-compose.yml down` |
 
+### Accéder à l'application
+Ouvrir un navigateur et aller sur :
+```
+http://localhost:80
+```
+
 ## 🌐 Architecture réseau
 
 <div align="center">
-  <img src="/SquidFrontend/img/architecture_reseau.png" alt="Architecture réseau SquidTchat" width="800"/>
+  <img src="/SquidFrontend/img/architecture_reseau.png" alt="Architecture réseau SquidTchat" width="1000"/>
 </div>
 
 ## 👨‍💻 Développeurs
