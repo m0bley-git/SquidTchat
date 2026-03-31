@@ -6,3 +6,6 @@ build*/
 
 #Bloque le push sur github des dossier .qtcreator
 .qtcreator/
+
+# Bloque le push sur github des fichiers de log
+*.log

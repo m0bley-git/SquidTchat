@@ -128,3 +128,39 @@ body {
 .btn-mp:hover {
     background-color: #636dbe;
 }
+
+/* Style pour les bulles de messages reçues */
+.messages div {
+    animation: fadeIn 0.3s ease;
+    word-wrap: break-word;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.bulle-message {
+    max-width: 80%;
+    padding: 10px 15px;
+    border-radius: 15px;
+    color: white;
+    font-family: sans-serif;
+    margin-bottom: 10px;
+    line-height: 1.4;
+}
+
+/* Style pour mes messages (à droite) */
+.mon-message {
+    align-self: flex-end;
+    background-color: #a8f000;
+    color: #1e2245;
+    border-bottom-right-radius: 2px;
+}
+
+/* Style pour les messages reçus (à gauche) */
+.message-recu {
+    align-self: flex-start;
+    background-color: #545eab;
+    border-bottom-left-radius: 2px;
+}

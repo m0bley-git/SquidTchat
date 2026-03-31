@@ -60,7 +60,7 @@ Le tout propulsé par une communication WebSocket entre un frontend web et un se
 <details>
   <summary>Voir le schéma</summary>
   <div align="center">
-    <img src="SquidFrontend/img/architecture_reseau.png" alt="Architecture réseau SquidTchat" width="900"/>
+    <img src="SquidFrontend/img/architecture_reseau.png" alt="Architecture réseau SquidTchat" width="1000"/>
   </div>
 </details>
 
@@ -125,8 +125,4 @@ http://localhost:80
 
 <div align="center">
 2025 — 2026 · Groupe 8 · CIEL 1 · Campus St Félix-La Salle, Nantes
-</div>
-
-<div align="center">
-  <img src="/SquidFrontend/img/stfl.png" alt="Campus St Félix-La Salle" width="150"/>
 </div>

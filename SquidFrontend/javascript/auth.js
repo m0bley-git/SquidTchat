@@ -1,3 +1,7 @@
+/**
+ * @author W.Sanquer
+ */
+
 // Vérifie si un pseudo existe dans le stockage de la session.
 const pseudo = sessionStorage.getItem("pseudo");
 

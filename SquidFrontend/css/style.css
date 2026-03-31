@@ -1,5 +1,11 @@
+@font-face {
+    font-family: 'Aristotelica';
+    src: url('../font/aristotelica/AristotelicaSmallCaps-Regular.ttf');
+}
+
 * {
     text-decoration: none;
+    font-family: Aristotelica;
 }
 
 body {
