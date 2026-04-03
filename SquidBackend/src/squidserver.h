@@ -23,6 +23,7 @@ private:
     void user_name_already_use (QString User_name);
     void brodcast_message_f(QString message_f);
     void mp_message(QString message_mp,QString user_name_mptarget);
+    void research(QString recherche);
 
     QString filtrerMessage(const QString &message); // --- Filtre message----//
 
@@ -34,6 +35,7 @@ private:
 
 private slots:
     void New_Connection();
+    void client_disconnected(QString user_name);
 
 };
 

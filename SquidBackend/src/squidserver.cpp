@@ -19,6 +19,9 @@ void SquidServer::start_SquidServer(int porte)
     // C'est ici qu'on connecte le serveur à ton slot New_Connection
     connect(m_pserver, &QWebSocketServer::newConnection,this, &SquidServer::New_Connection);
 
+
+
+
     if (m_pserver->listen(QHostAddress::Any, porte)) {
         qDebug() << "Serveur lancé sur le port" << porte;
     }else{
@@ -46,6 +49,12 @@ QWebSocket *pSocket = m_pserver->nextPendingConnection();
 
     // connect pour les message pour les mp
     connect(m_pnewclient,&Squidcien_session::signal_message_for_mp,this,&SquidServer::mp_message);
+
+    // connect research
+    connect(m_pnewclient,&Squidcien_session::signal_recherche,this,&SquidServer::research);
+
+    // connect gestion de la deconextion sortie des liste
+    connect(m_pnewclient, &Squidcien_session::signal_disconnected,this, &SquidServer::client_disconnected);
 
     User_No_autentifier.append(m_pnewclient);
     qDebug() << "Le nouvaux est passer dans la fille d'attant";
@@ -76,6 +85,21 @@ void SquidServer::user_name_already_use (QString User_name){
     }
 }
 
+void SquidServer::research(QString recherche){
+    QStringList resultats;
+    QList<QString> all_user_name = User_autentifier.keys();
+
+    for (const QString &user_name : std::as_const(all_user_name)) {
+        if (user_name.contains(recherche)) {
+            resultats.append(user_name);
+        }
+    }
+    Squidcien_session* client_actuel = qobject_cast<Squidcien_session*>(sender());
+    qDebug() << resultats;
+    client_actuel->recherche_rep(resultats);
+
+}
+
 void SquidServer::brodcast_message_f(QString message_f)
 {
     qDebug() << "Broadcast du message forum :" << message_f;
@@ -90,6 +114,21 @@ void SquidServer::brodcast_message_f(QString message_f)
     }
 }
 
+void SquidServer::client_disconnected(QString user_name){
+    Squidcien_session* session = qobject_cast<Squidcien_session*>(sender());
+    //securiter pour ne pas sup 2 fois
+    if (!user_name.isEmpty()) {
+        // Utilisateur authentifié → on le retire de la map principale
+        User_autentifier.remove(user_name);
+        qDebug() << "Utilisateur retiré :" << user_name;
+    }
+
+    if (session) {
+        // Dans tous les cas → retirer de la file d'attente (authentifié ou non)
+        User_No_autentifier.removeAll(session);
+        session->deleteLater(); // libère la session proprement
+    }
+}
 void SquidServer::mp_message(QString message_mp, QString user_name_mptarget)
 {
     // 2. Recherche optimisée (ne parcourt l'arbre qu'une seule fois)
