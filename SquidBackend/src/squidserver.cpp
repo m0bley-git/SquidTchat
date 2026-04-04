@@ -1,245 +1,156 @@
-#include "squidcien_session.h"
+#include "squidserver.h"
 #include <QObject>
 #include <QWebSocketServer>
 #include <QMap>
 #include <QString>
 #include <QList>
 #include <QPointer>
-#include <QJsonDocument>   // Pour manipuler le document global
-#include <QJsonObject>     // Pour les structures { "cle": "valeur" }
-#include <QJsonArray>      // Si tu as des listes [ ... ]
-#include <QJsonValue>      // Pour manipuler une donnée précise
-#include <QJsonParseError> // TRES important pour savoir pourquoi ça crash
 
-Squidcien_session::Squidcien_session(QWebSocket *pclient, QObject *parent){
-    m_autentifier=false;
-    m_pclient=pclient;
-    m_User_name="";
-    connect(m_pclient, &QWebSocket::textMessageReceived, this, &Squidcien_session::onMessageReceived);
 
-    //connect pour les gesiton de deco TCP close
-    connect(m_pclient, &QWebSocket::disconnected, this, &Squidcien_session::Disconnected);
-
-    //a fix pour le nom user deja utiliser \/
-
+SquidServer::SquidServer(QObject *parent): QObject(parent), m_pserver(nullptr)
+{
 
 }
-void Squidcien_session::onMessageReceived(const QString &message)
+
+void SquidServer::start_SquidServer(int porte)
 {
-    // message contient ici le texte envoyé par le client
-    qDebug() << "Message reçu du Squid Client :" << message;
-    // début trantement JSON
-    QString reponc="";
-    QString pseudo="";
-    QJsonDocument doc = QJsonDocument::fromJson(message.toUtf8());
-    if (doc.isNull() || !doc.isObject()) {
-        reponc = "Erreur : Le JSON est corrompu ou mal formé ou vide.";
+    m_pserver = new QWebSocketServer(QStringLiteral("SquidChat"),QWebSocketServer::NonSecureMode);
+
+    // C'est ici qu'on connecte le serveur à ton slot New_Connection
+    connect(m_pserver, &QWebSocketServer::newConnection,this, &SquidServer::New_Connection);
+
+
+
+
+    if (m_pserver->listen(QHostAddress::Any, porte)) {
+        qDebug() << "Serveur lancé sur le port" << porte;
     }else{
-        QJsonObject root = doc.object();
-
-        QString type = root["type"].toString();
-
-        // oute pseudo
-        if (root.contains("payload") && root["payload"].isObject()) {
-            QJsonObject payload = root["payload"].toObject();
-            //  Type chec
-            if(type == "auth/register"){
-                pseudo = payload["pseudo"].toString();
-
-                if (pseudo_autorise(pseudo)) {
-                    // SUCCÈS : Le pseudo est bon, on valide l'authentification.
-                    qDebug() << "Nouvelle tentative d'inscription acceptee pour :" << pseudo;
-                    m_User_name = pseudo;
-                    emit signal_autentifier(m_User_name);
-
-                } else {
-                    // ÉCHEC : Le pseudo est banni (ex: admin, root). On le rejette.
-                    QString reponc = "Erreur : Le nom d'utilisateur n'est pas aux normes de la plateforme";
-                    QString type_ack = "auth/ack"; // Renommé pour ne pas écraser la variable 'type' parente
-                    QString message = sendError(reponc, type_ack);
-                    sendMessage(message);
-                }
-            }
-
-            if(type == "forum/send"){
-                if (m_autentifier){
-                    //gestion des message pour le forum
-
-                    QString message_f = payload["content"].toString();
-                    //Fonction de raphaelle add_username_for_f
-
-                    QString message_f_from = QJsonDocument(QJsonObject{{"type","forum/send"}
-                                                                       ,{"timestamp",QDateTime::currentDateTimeUtc().toString(Qt::ISODate)},
-                                                                       {"payload",QJsonObject{{"from",m_User_name},{"content",message_f}}}})
-                                                 .toJson(QJsonDocument::Compact);
-
-
-                    emit signal_message_fro_forum(message_f_from);
-                }else{
-                    QString reponc = "Erreur : autentifier vous avant";
-                    QString type_ack = "forum/send";
-                    QString message = sendError(reponc, type_ack);
-                    sendMessage(message);
-                }
-            }
-            if (type == "mp/send"){
-
-                if (m_autentifier){
-
-                    QString message_mp=payload["content"].toString();
-                    QString user_name_mptarget=payload["to"].toString();
-
-                    QString message_mp_from = QJsonDocument(QJsonObject{{"type","mp/message"},
-                                                                        {"timestamp",QDateTime::currentDateTimeUtc().toString(Qt::ISODate)},
-                                                                        {"payload",QJsonObject{{"from",m_User_name},{"content",message_mp}}}}).toJson(QJsonDocument::Compact);
-
-                    emit signal_message_for_mp(message_mp_from,user_name_mptarget);
-
-                }else{
-                    QString reponc = "Erreur : autentifier vous avant";
-                    QString type_ack = "forum/send";
-                    QString message = sendError(reponc, type_ack);
-                    sendMessage(message);
-                }}
-            if (type == "users/list"){
-
-                if (m_autentifier){
-
-                    QString research=payload["research"].toString();
-                    emit signal_recherche(research);
-
-
-                }else{
-                    QString reponc = "Erreur : autentifier vous au avant";
-                    QString type_ack = "users/list";
-                    QString message = sendError(reponc, type_ack);
-                    sendMessage(message);
-                }
-            }
-
-        }
+        qDebug() << "Erreur: Le port" << porte << "est probablement en cours d'utilisation par un autre processus.";
     }
 }
 
-
-void Squidcien_session::Disconnected(){
-    QJsonObject payload;
-    payload["pseudo"] = m_User_name;
-
-    QJsonObject root;
-    root["type"] = "presence/left";
-    root["timestamp"] = "2026-03-20T14:32:01Z"; // a a changer avec le vrais temps
-    root["payload"] = payload;
-
-    QJsonDocument doc(root);
-    QString jsonString = QString::fromUtf8(doc.toJson(QJsonDocument::Compact));
-    emit signal_message_fro_forum(jsonString);
-    qDebug() << "Squid Client déconnecté :" << (m_User_name.isEmpty() ? "(non authentifié)" : m_User_name);
-    emit signal_disconnected(m_User_name); // signial pour la suprestion des liste
-    m_pclient->deleteLater(); // libère le QWebSocket proprement
-
-}
-
-void Squidcien_session::user_data_update(bool server_status,QString User_name){
-    if (User_name==m_User_name && m_autentifier==false ){
-        if(server_status){
-            //traiter erreur
-            QString reponc="Erreur : le nom d'utilisateur est deja utiliser";
-            QString type = "auth/ack";
-            QString message = sendError(reponc,type);
-            sendMessage(message);
-            qDebug() << "L'utilisateur " << m_User_name << "et rejeter car le nom d'utilisateur est deja utiliser ";
-
-
-        }else{
-
-            m_autentifier=true;
-            qDebug() << "L'utilisateur " << m_User_name << " est authentifier";
-            QJsonObject payload;
-            payload["status"] = "ok";
-            payload["pseudo"] = m_User_name;
-
-            QJsonObject root;
-            root["type"] = "auth/ack";
-            root["timestamp"] = "2026-03-20T14:32:01Z"; // a a changer avec le vrais temps
-            root["payload"] = payload;
-
-            QJsonDocument doc(root);
-            QString jsonString = QString::fromUtf8(doc.toJson(QJsonDocument::Compact));
-
-
-            sendMessage(jsonString);
-
-            send_f_presencecome();//send the notif to the forum hi am heer
-        }
-    }
-}
-void Squidcien_session::send_f_presencecome(){
-    if (m_autentifier==true){
-        QJsonObject payload;
-        payload["pseudo"] = m_User_name;
-
-        QJsonObject root;
-        root["type"] = "presence/come";
-        root["timestamp"] = "2026-03-20T14:32:01Z"; // a a changer avec le vrais temps
-        root["payload"] = payload;
-
-        QJsonDocument doc(root);
-        QString jsonString = QString::fromUtf8(doc.toJson(QJsonDocument::Compact));
-        emit signal_message_fro_forum(jsonString);
-    }
-}
-void Squidcien_session::sendMessage(const QString &message)
+void SquidServer::New_Connection()
 {
-    // On vérifie que le pointeur n'est pas nulptr == conextion fermer
-    if (m_pclient && m_pclient->isValid()) {
-        m_pclient->sendTextMessage(message);
-    } else {
-        qDebug() << "Erreur : Impossible d'envoyer le message, socket invalide ou déconnecté.";
+    QWebSocket *pSocket = m_pserver->nextPendingConnection();
+
+    if (pSocket){
+        qDebug() << "nouvaux Squid Client";
+        m_pnewclient = new Squidcien_session(pSocket);
+
+        // connect pour les pseudo deja utiliser  et +
+        connect(m_pnewclient,&Squidcien_session::signal_autentifier,this,&SquidServer::user_name_already_use);
+
+        // connect de réponce pour les pseudo deja utiliser et +
+        connect(this, &SquidServer::signal_user_name_status,
+                m_pnewclient, &Squidcien_session::user_data_update);
+
+        // connect pour les message pour le forum général
+        connect(m_pnewclient,&Squidcien_session::signal_message_fro_forum,this,&SquidServer::brodcast_message_f);
+
+        // connect pour les message pour les mp
+        connect(m_pnewclient,&Squidcien_session::signal_message_for_mp,this,&SquidServer::mp_message);
+
+        // connect research
+        connect(m_pnewclient,&Squidcien_session::signal_recherche,this,&SquidServer::research);
+
+        // connect gestion de la deconextion sortie des liste
+        connect(m_pnewclient, &Squidcien_session::signal_disconnected,this, &SquidServer::client_disconnected);
+
+        User_No_autentifier.append(m_pnewclient);
+        qDebug() << "Le nouvaux est passer dans la fille d'attant";
+    }
+}
+void SquidServer::user_name_already_use (QString User_name){
+    bool value = false;
+    if (User_autentifier.contains(User_name))
+    {
+        // Cas 1 : USER NAME déjà utilisée
+        // puis renvoyer une erreur au client
+        value = true;
+        emit(signal_user_name_status(value,User_name));
+    }
+    else
+    {
+        // Cas 2 : USER NAME introuvable → nouveau user, on peut l'enregistrer
+        // puis créer la session et l'insérer dans la map
+        Squidcien_session* client_actuel = qobject_cast<Squidcien_session*>(sender());
+
+        if (client_actuel) {
+            User_autentifier.insert(User_name, client_actuel);
+        }
+
+        emit(signal_user_name_status(value,User_name));
+
+
     }
 }
 
+void SquidServer::research(QString recherche){
+    QStringList resultats;
+    QList<QString> all_user_name = User_autentifier.keys();
 
-bool Squidcien_session::pseudo_autorise(const QString pseudo) {
-
-    const std::vector<QString> interdits = {"admin", "root", "moderateur"};  // Création de la liste interdite
-
-    for (const QString& mot : interdits) { // Comparaison : pseudo / liste interdite
-
-        if (pseudo == mot) return false;
-
-    } // Si la boucle se termine sans correspondance, le pseudo est accepté
-
-    return true;
+    for (const QString &user_name : std::as_const(all_user_name)) {
+        if (user_name.contains(recherche)) {
+            resultats.append(user_name);
+        }
+    }
+    Squidcien_session* client_actuel = qobject_cast<Squidcien_session*>(sender());
+    qDebug() << resultats;
+    client_actuel->recherche_rep(resultats);
 
 }
 
-QString Squidcien_session::sendError(const QString &source_error, const QString &type) {
-    QJsonObject payload;
-    payload["status"] = "error";
-    payload["reason"] = source_error;
+void SquidServer::brodcast_message_f(QString message_f)
+{
+    qDebug() << "Broadcast du message forum :" << message_f;
 
-    QJsonObject racine;
-    racine["type"] = type;
-    racine["timestamp"] = QDateTime::currentDateTimeUtc().toString(Qt::ISODate);
-    racine["payload"] = payload;
+    // On parcourt tous les objets Squidcien_session stockés dans la Map
+    for (Squidcien_session* session : User_autentifier.values()) {
 
-    QJsonDocument doc(racine);
-    return doc.toJson(QJsonDocument::Indented);
+        // On vérifie toujours que le pointeur n'est pas nul (sécurité enfant)
+        if (session) {
+            session->sendMessage(message_f);
+        }
+    }
 }
 
+void SquidServer::client_disconnected(QString user_name){
+    Squidcien_session* session = qobject_cast<Squidcien_session*>(sender());
+    //securiter pour ne pas sup 2 fois
+    if (!user_name.isEmpty()) {
+        // Utilisateur authentifié → on le retire de la map principale
+        User_autentifier.remove(user_name);
+        qDebug() << "Utilisateur retiré :" << user_name;
+    }
 
-void Squidcien_session::recherche_rep(QStringList resulta){
-    QJsonObject payload;
-    payload["users"] = QJsonArray::fromStringList(resulta);
+    if (session) {
+        // Dans tous les cas → retirer de la file d'attente (authentifié ou non)
+        User_No_autentifier.removeAll(session);
+        session->deleteLater(); // libère la session proprement
+    }
+}
+void SquidServer::mp_message(QString message_mp, QString user_name_mptarget)
+{
+    // 2. Recherche optimisée (ne parcourt l'arbre qu'une seule fois)
+    auto it = User_autentifier.constFind(user_name_mptarget);
 
-    QJsonObject root;
-    root["type"] = "users/list";
-    root["timestamp"] = "2026-03-20T14:32:01Z"; // a a changer avec le vrais temps
-    root["payload"] = payload;
+    // 3. Vérification de l'existence
+    if (it != User_autentifier.constEnd()) {
+        // Succès : on récupère le pointeur
+        Squidcien_session* session = it.value();
 
-    QJsonDocument doc(root);
-    QString jsonString = QString::fromUtf8(doc.toJson(QJsonDocument::Compact));
-
-    sendMessage(jsonString);
+        // Vérification point n'est pas a nul PTR
+        if (session) {
+            session->sendMessage(message_mp);
+        }
+    } else {
+        // Échec : l'user n'est pas la
+        Squidcien_session* client_actuel = qobject_cast<Squidcien_session*>(sender());
+        // Vérification point n'est pas a nul PTR
+        if (client_actuel) {
+            QString reponc = "Erreur : utilisateur non trouver";
+            QString type_ack = "mp/error";
+            client_actuel->sendMessage(client_actuel->sendError(reponc,type_ack));
+        }
+    }
 }
