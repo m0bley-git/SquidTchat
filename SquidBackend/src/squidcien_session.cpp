@@ -68,21 +68,10 @@ void Squidcien_session::onMessageReceived(const QString &message)
                     QString message_f = payload["content"].toString();
                     //Fonction de raphaelle add_username_for_f
 
-<<<<<<< Updated upstream
-                // --- APPLICATION DU FILTRE ---
-                message_f = filtrerMessage(message_f); 
-                // -----------------------------
-
-                QString message_f_from = QJsonDocument(QJsonObject{{"type","forum/send"}
-                ,{"timestamp",QDateTime::currentDateTimeUtc().toString(Qt::ISODate)},
-                {"payload",QJsonObject{{"from",m_User_name},{"content",message_f}}}})
-                .toJson(QJsonDocument::Compact);
-=======
                     QString message_f_from = QJsonDocument(QJsonObject{{"type","forum/send"}
                                                                        ,{"timestamp",QDateTime::currentDateTimeUtc().toString(Qt::ISODate)},
                                                                        {"payload",QJsonObject{{"from",m_User_name},{"content",message_f}}}})
                                                  .toJson(QJsonDocument::Compact);
->>>>>>> Stashed changes
 
 
                     emit signal_message_fro_forum(message_f_from);
@@ -97,18 +86,8 @@ void Squidcien_session::onMessageReceived(const QString &message)
 
                 if (m_autentifier){
 
-<<<<<<< Updated upstream
-                QString message_mp=payload["content"].toString();
-
-                // --- APPLICATION DU FILTRE ---
-                message_mp = filtrerMessage(message_mp);
-                // -----------------------------
-
-                QString user_name_mptarget=payload["to"].toString();
-=======
                     QString message_mp=payload["content"].toString();
                     QString user_name_mptarget=payload["to"].toString();
->>>>>>> Stashed changes
 
                     QString message_mp_from = QJsonDocument(QJsonObject{{"type","mp/message"},
                                                                         {"timestamp",QDateTime::currentDateTimeUtc().toString(Qt::ISODate)},
@@ -194,61 +173,9 @@ void Squidcien_session::user_data_update(bool server_status,QString User_name){
             send_f_presencecome();//send the notif to the forum hi am heer
         }
     }
-<<<<<<< Updated upstream
-
-    void Squidcien_session::sendMessage(const QString &message)
-    {
-        // On vérifie que le pointeur n'est pas nulptr == conextion fermer
-        if (m_pclient && m_pclient->isValid()) {
-            m_pclient->sendTextMessage(message);
-        } else {
-            qDebug() << "Erreur : Impossible d'envoyer le message, socket invalide ou déconnecté.";
-        }
-    }
-// A FAIRE : 
-// - Filtre miniscule + Majuscule   (pseudo / message)
-// - Fichier texte à affecté (pseudo / message)
-
-    bool Squidcien_session::pseudo_autorise(const QString pseudo) {
-
-        const std::vector<QString> interdits = {"admin", "root", "moderateur", "administrator", "Moderator", "Mod", "Support", "Staff", "System", "Webmaster", "Bot","Security","Nazi", "Hitler", "Genocide", "Terrosiste", "Juda", "Freecandy", "Sex", "Sexe", "Porn", "Porno","Pedo"};  // Création de la liste interdite
-
-        for (const QString& mot : interdits) { // Comparaison : pseudo / liste interdite
-
-            if (pseudo == mot) return false;
-
-        } // Si la boucle se termine sans correspondance, le pseudo est accepté
-
-        return true;
-
-    }
-
-    QString Squidcien_session::filtrerMessage(const QString &message) {
-        QString messageFiltre = message;
-
-        //Liste des mots à filtrer
-        static const QStringList insultes ={"tg", "salope","connard"}
-        
-        for (const QString &mot : insultes) 
-        {
-            QRegularExpression re("\\b" + QRegularExpression::escape(mot) + "\\b", QRegularExpression::CaseInsensitiveOption);
-        
-            QString remplacement;
-            remplacement.fill('***', mot.length());
-        
-        messageFiltre.replace(re, remplacement);
-        }
-        return messageFiltre;
-    }
-    
-
-
-    QString Squidcien_session::sendError(const QString &source_error, const QString &type) {
-=======
 }
 void Squidcien_session::send_f_presencecome(){
     if (m_autentifier==true){
->>>>>>> Stashed changes
         QJsonObject payload;
         payload["pseudo"] = m_User_name;
 

@@ -40,7 +40,7 @@ private:
     QMap <QString,QStringList> m_MP_histroy;
 
 
- private slots:
+private slots:
     void onMessageReceived(const QString &message);
     void Disconnected();
 
