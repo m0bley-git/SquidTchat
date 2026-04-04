@@ -3,22 +3,57 @@
  * AUTHOR  : W.Sanquer
  * DATE    : 2026
  *****************************************************/
-
-// On récupère le texte où l'utilisateur tape son pseudo.
+/* ===================================================
+    Recuperation des elements de la page (Boutons et Zones de texte)
+   =================================================== */
+// Je recupère le texte où l'utilisateur tape son pseudo.
 const input = document.querySelector(".pseudo");
-
-// On récupère le bouton pour passer a la page forum.
+// Je recupère le bouton pour passer a la page forum.
 const lien = document.querySelector(".btn");
 
-// Le navigateur surveille le moment où l'utilisateur clique sur le lien pour empecher de changer de page.
+/* ===================================================
+    Affichage de l'erreur si le pseudo a ete refuse
+   =================================================== */
+const erreur = sessionStorage.getItem("erreur");
+if (erreur) {
+    document.querySelector(".erreur").textContent = erreur;
+    sessionStorage.removeItem("erreur");
+}
+
+/* ===================================================
+    Blocage du bouton en l'absence du pseudo
+   =================================================== */
 lien.addEventListener("click", (e) => {
     if (input.value.trim().length === 0) {
         e.preventDefault();
     } else {
         e.preventDefault();
-        
         // Sauvegarde le pseudo et redirige vers le forum
         sessionStorage.setItem("pseudo", input.value.trim());
         window.location.href = "pages/forum.html";
+    }
+});
+
+/* ===================================================
+    Raccourci clavier pour la touche entrer
+   =================================================== */
+input.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+        lien.click();
+    }
+});
+
+/* ===================================================
+    Gestion des CGU
+   =================================================== */
+function acceptCGU() {
+    const banner = document.getElementById('cgu-banner');
+    banner.style.display = 'none';
+    sessionStorage.setItem('squidtchat_cgu', 'accepted');
+}
+
+window.addEventListener('load', () => {
+    if (sessionStorage.getItem('squidtchat_cgu') === 'accepted') {
+        document.getElementById('cgu-banner').style.display = 'none';
     }
 });

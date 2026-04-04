@@ -46,6 +46,7 @@ body {
    =================================================== */
 .messages {
     flex: 1;
+    min-height: 0;
     padding: 12px 20px;
     overflow-y: auto;
     display: flex;
@@ -61,6 +62,7 @@ body {
     overflow: hidden;
     display: flex;
     flex-direction: column;
+    flex-shrink: 0;
 }
 
 .messages .moi {
@@ -87,6 +89,14 @@ body {
     white-space: pre-wrap;
     background-color: #636dbe;
     color: white;
+}
+
+.notif {
+    align-self: center;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 12px;
+    font-style: italic;
+    text-align: center;
 }
 
 /* ===================================================
@@ -175,7 +185,7 @@ body {
     flex-shrink: 0;
 }
 
-/* Pastille de bouton MP */
+/* Pastille de bouton MP - notification MP non lu */
 .btn-mp::after {
     content: '';
     position: absolute;
@@ -186,6 +196,11 @@ body {
     background-color: #79bce4;
     border-radius: 50%;
     border: 2px solid #1a1a2e;
+    transition: background-color 0.3s;
+}
+
+.btn-mp.notif-mp::after {
+    background-color: #ff4444;
 }
 
 .btn-mp:hover {

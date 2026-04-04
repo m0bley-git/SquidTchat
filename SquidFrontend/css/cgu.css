@@ -1,0 +1,102 @@
+/*****************************************************
+ * PROJECT : SquidTchat - CGU
+ * AUTHOR  : W.Sanquer
+ * DATE    : 2026
+ *****************************************************/
+
+@font-face {
+    font-family: 'Aristotelica';
+    src: url('../font/aristotelica/AristotelicaSmallCaps-Regular.ttf');
+}
+
+body {
+    background-color: #2a2f55;
+    font-family: 'Arial', sans-serif;
+    color: white;
+    margin: 0;
+    padding: 40px 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.container-CGU {
+    max-width: 800px;
+    width: 100%;
+    background-color: #545eab;
+    padding: 40px;
+    border-radius: 30px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.Titre {
+    font-family: 'Aristotelica', sans-serif;
+    color: #76d18b; 
+    text-align: center;
+    font-size: 32px;
+    margin-bottom: 40px;
+    text-transform: uppercase;
+    border-bottom: 2px solid rgba(118, 209, 139, 0.2);
+    padding-bottom: 20px;
+}
+
+.section-CGU {
+    margin-bottom: 25px;
+    line-height: 1.6;
+}
+
+.section-CGU h4 {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+    color: #76d18b;
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-left: 3px solid #76d18b;
+    padding-left: 10px;
+}
+
+.section-CGU p {
+    font-size: 15px;
+    color: rgba(255, 255, 255, 0.9);
+    text-align: justify;
+}
+
+.section-CGU ul {
+    list-style: none;
+    padding-left: 10px;
+}
+
+.section-CGU li {
+    margin-bottom: 10px;
+    padding-left: 25px;
+    position: relative;
+    font-size: 15px;
+}
+
+.section-CGU li::before {
+    content: "•";
+    color: #76d18b;
+    font-size: 20px;
+    position: absolute;
+    left: 0;
+    top: -2px;
+}
+
+.back-link {
+    display: block;
+    text-align: center;
+    margin-top: 30px;
+    color: rgba(255, 255, 255, 0.5);
+    text-decoration: none;
+    font-size: 13px;
+    transition: 0.3s;
+}
+
+.back-link:hover {
+    color: #76d18b;
+}
+
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: #2a2f55; }
+::-webkit-scrollbar-thumb { background: #76d18b; border-radius: 10px; }

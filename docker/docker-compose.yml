@@ -1,0 +1,42 @@
+# ============================================================
+# PROJECT : SquidTchat
+# AUTHOR  : W.Sanquer
+# DATE    : 2026
+# ============================================================
+
+name: SquidTchat
+
+services:
+
+  # --------------------------------------------------------
+  # Backend : serveur WebSocket Qt6 C++
+  # --------------------------------------------------------
+  backend:
+    build:
+      context: ..          # racine du projet (là où sont SquidBackend/ et SquidFrontend/)
+      dockerfile: docker/Dockerfile
+    container_name: squidtchat-backend
+    ports:
+      - "1234:1234"        # port WebSocket exposé à l'hôte
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c 'echo > /dev/tcp/localhost/1234'"]
+      interval: 3s          # vérifie toutes les 3 secondes
+      timeout: 2s
+      retries: 10           # attend jusqu'à 30s que le backend soit prêt
+      start_period: 5s      # laisse 5s au backend pour démarrer avant de commencer
+
+  # --------------------------------------------------------
+  # Frontend : fichiers statiques servis par Nginx
+  # --------------------------------------------------------
+  frontend:
+    image: nginx:alpine
+    container_name: squidtchat-frontend
+    ports:
+      - "8080:80"          # accès via http://localhost:8080
+    volumes:
+      - ../SquidFrontend:/usr/share/nginx/html:ro
+    depends_on:
+      backend:
+        condition: service_healthy   # attend que le backend réponde avant de démarrer
+    restart: unless-stopped

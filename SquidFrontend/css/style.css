@@ -134,3 +134,49 @@ body {
     font-size: 15px;
     margin-top: 5px;
 }
+
+/* ===================================================
+    Bannière CGU Subtile
+   =================================================== */
+.cgu-banner {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(42, 47, 85, 0.95); /* Ton bleu foncé avec transparence */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 5px 20px;
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    z-index: 999;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.cgu-banner p {
+    color: white;
+    font-family: 'Aristotelica', sans-serif;
+    font-size: 12px;
+    margin: 0;
+}
+
+.cgu-banner a {
+    color: #76d18b; /* Ton vert */
+    text-decoration: underline;
+}
+
+.cgu-banner button {
+    background-color: #76d18b;
+    border: none;
+    border-radius: 20px;
+    padding: 5px 15px;
+    font-family: 'Aristotelica', sans-serif;
+    font-size: 10px;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.cgu-banner button:hover {
+    transform: scale(1.05);
+}

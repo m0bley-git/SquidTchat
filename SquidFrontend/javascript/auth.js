@@ -4,10 +4,16 @@
  * DATE    : 2026
  *****************************************************/
 
-// Vérifie si un pseudo existe dans le stockage de la session.
+/* ===================================================
+    Regarde dans la memoire de la session si un pseudo est enregistre
+   =================================================== */
+
 const pseudo = sessionStorage.getItem("pseudo");
 
-// Si aucun pseudo enregistrer redirige vers la page de connexion.
+/* ===================================================
+    Si aucun pseudo enregistrer dans la memoire redirection
+   =================================================== */
+
 if (!pseudo) {
-    window.location.href = "../index.html";
+    window.location.href = "/index.html";
 }
