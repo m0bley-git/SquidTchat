@@ -87,8 +87,8 @@ Puis ouvrir : `http://<IP de la machine>:8080`
 <table>
   <tr>
     <td align="center">
-      <a href="https://github.com/m0bley-git" style="text-decoration: none;">
-        <img src="https://github.com/m0bley-git.png" width="100px;" alt="m0bley-git"/><br />
+      <a href="https://github.com/sawlvl" style="text-decoration: none;">
+        <img src="https://github.com/sawlvl.png" width="100px;" alt="sawlvl"/><br />
         <sub><b>Wilstan</b></sub><br/>
         <sub>Dev Frontend</sub>
       </a>
