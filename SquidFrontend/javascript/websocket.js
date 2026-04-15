@@ -8,7 +8,14 @@
     Ouverture de la connexion avec le serveurs
    =================================================== */
 
-const socket = new WebSocket("ws://127.0.0.1:1234");
+const wsUrl = window.SQUIDTCHAT_WS_URL || "ws://127.0.0.1:1234";
+const socket = new WebSocket(wsUrl);
+
+/* ===================================================
+    Memoire des timers de deconnexion
+   =================================================== */
+
+const pendingLeftTimers = {};
 
 /* ===================================================
     Presentation aupres du serveur
@@ -51,26 +58,32 @@ socket.onmessage = (event) => {
     // Notification de connexion d'un utilisateur
     if (reponse.type === "presence/come") {
         if (reponse.payload.pseudo === "") return;
-        const historique = JSON.parse(sessionStorage.getItem("forum") || "[]");
-        historique.push({
-            type: "presence/come",
-            pseudo: reponse.payload.pseudo
-        });
-        sessionStorage.setItem("forum", JSON.stringify(historique));
-        if (surPageForum) afficherNotif(reponse.payload.pseudo + " a rejoint les joueurs 🟢");
+        if (reponse.payload.pseudo === pseudo) return; // ignore sa propre connexion
+
+        const pseudoCome = reponse.payload.pseudo;
+
+        // Annule le timer de deconnexion si le user revient rapidement
+        if (pendingLeftTimers[pseudoCome]) {
+            clearTimeout(pendingLeftTimers[pseudoCome]);
+            delete pendingLeftTimers[pseudoCome];
+            return; // ne pas afficher "a rejoint" non plus
+        }
+
+        if (surPageForum) afficherNotif(pseudoCome + " a rejoint les joueurs");
     }
 
     // Notification de déconnexion d'un utilisateur
     if (reponse.type === "presence/left") {
         if (reponse.payload.pseudo === "") return;
         if (reponse.payload.pseudo === pseudo) return;
-        const historique = JSON.parse(sessionStorage.getItem("forum") || "[]");
-        historique.push({
-            type: "presence/left",
-            pseudo: reponse.payload.pseudo
-        });
-        sessionStorage.setItem("forum", JSON.stringify(historique));
-        if (surPageForum) afficherNotif(reponse.payload.pseudo + " a été éliminé 🔴");
+
+        const pseudoLeft = reponse.payload.pseudo;
+
+        // Attend 2 secondes avant d'afficher le message de deconnexion
+        pendingLeftTimers[pseudoLeft] = setTimeout(() => {
+            if (surPageForum) afficherNotif(pseudoLeft + " a été éliminé");
+            delete pendingLeftTimers[pseudoLeft];
+        }, 2000);
     }
 
     // Resultats de recherche d'utilisateurs
@@ -189,10 +202,6 @@ const historique = JSON.parse(sessionStorage.getItem("forum") || "[]");
 historique.forEach(msg => {
     if (msg.type === "forum/send") {
         afficherBulle(msg.from, msg.content);
-    } else if (msg.type === "presence/come") {
-        afficherNotif(msg.pseudo + " a rejoint les joueurs 🟢");
-    } else if (msg.type === "presence/left") {
-        afficherNotif(msg.pseudo + " a été éliminé 🔴");
     }
 });
 
