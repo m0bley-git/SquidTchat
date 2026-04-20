@@ -28,6 +28,9 @@ public:
     void add_b_words(QString b_word);
     void dell_b_words(QString b_word);
     void dell_member(Squidcien_session* user);
+    QString get_grp_info();
+    QString get_grp_admin_info();
+
 
 private:
     QList<Squidcien_session*> m_member;

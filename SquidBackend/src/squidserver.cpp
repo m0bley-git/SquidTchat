@@ -61,6 +61,31 @@ void SquidServer::New_Connection()
         // connect creation de group
         connect(m_pnewclient, &Squidcien_session::signal_group_make,this, &SquidServer::group_maker);
 
+<<<<<<< Updated upstream
+=======
+        // connect sortie groupe
+        connect(m_pnewclient, &Squidcien_session::signal_group_leave,this, &SquidServer::on_group_leave_requested);
+
+        // connect pour l'est envois de message dans les groupe
+        connect(m_pnewclient, &Squidcien_session::signal_message_for_groupe,this, &SquidServer::brodcast_message_group);
+
+        //connect pour l'ajout de mot bloquer dans les grp
+        connect(m_pnewclient, &Squidcien_session::signal_add_b_word,this, &SquidServer::add_b_word);
+
+        //connect pour sup des mot bloquer dans les grp
+        connect(m_pnewclient, &Squidcien_session::signal_dell_b_word,this, &SquidServer::dell_b_word);
+
+        //connect qu'un admin kick un user d'un grp
+        connect(m_pnewclient, &Squidcien_session::signal_kick_user_grp,this, &SquidServer::kick_user);
+
+        //connect info grp
+        connect(m_pnewclient, &Squidcien_session::signal_info,this, &SquidServer::grp_info);
+
+
+        //connect info admin grp
+        connect(m_pnewclient, &Squidcien_session::signal_admin_info,this, &SquidServer::grp_admin_info);
+
+>>>>>>> Stashed changes
         User_No_autentifier.append(m_pnewclient);
         qDebug() << "Le nouvaux est passer dans la fille d'attant";
     }
@@ -100,6 +125,10 @@ void SquidServer::research(QString recherche){
         }
     }
     Squidcien_session* client_actuel = qobject_cast<Squidcien_session*>(sender());
+    if (!client_actuel){
+        qDebug() << "le client a l'orégine de la recherche c'est déconecter ";
+        return;
+    }
     qDebug() << resultats;
     client_actuel->recherche_rep(resultats);
 
@@ -119,6 +148,73 @@ void SquidServer::brodcast_message_f(QString message_f)
     }
 }
 
+<<<<<<< Updated upstream
+=======
+void SquidServer::brodcast_message_group(QString message_g,QString group,Squidcien_session* session)
+{
+    bool system_message=false;
+    QString message_g_from_bloked_word;
+    squid_group* groupe=Group.value(group);
+    if (!groupe){
+        qDebug() << "le groupe a etaite detrue ou n'a jamais exister .donc il est imposible d'envoyer un message dans le group " ;
+        return;
+    }
+
+    // [ traitement des message system ICI ]
+    QJsonObject obj = QJsonDocument::fromJson(message_g.toUtf8()).object();
+    if(!obj.isEmpty()){
+        QString type = obj["type"].toString();
+        if(type.contains("grp/system_info")||type.contains("grp/create_ack")){//<--- Code moche
+            system_message = true;
+        }}
+    // [ fin traitement des message system ICI ]
+
+    if (system_message==false){
+        if(!(session==groupe->get_p_admin())){
+            for (const QString &b_word : groupe->get_b_words()) {
+                message_g.replace(b_word, QString(b_word.length(), '*'), Qt::CaseInsensitive);
+            }
+
+            message_g_from_bloked_word = QJsonDocument(QJsonObject{
+                                                           {"type",      "grp/send"},
+                                                           {"timestamp", QDateTime::currentDateTimeUtc().toString(Qt::ISODate)},
+                                                           {"payload",   QJsonObject{
+                                                                           {"from",       session->get_user_name()},
+                                                                           {"group_name", group},
+                                                                           {"content",    message_g}
+                                                                       }}
+                                                       }).toJson(QJsonDocument::Compact);
+
+        }else{
+            message_g_from_bloked_word = QJsonDocument(QJsonObject{
+                                                           {"type",      "grp/send"},
+                                                           {"timestamp", QDateTime::currentDateTimeUtc().toString(Qt::ISODate)},
+                                                           {"payload",   QJsonObject{
+                                                                           {"from",       session->get_user_name()},
+                                                                           {"group_name", group},
+                                                                           {"content",    message_g}
+                                                                       }}
+                                                       }).toJson(QJsonDocument::Compact);
+
+        }
+    }else{
+        message_g_from_bloked_word=message_g;
+    }
+    if (groupe->get_p_member().contains(session)){
+        qDebug() << "envois du message  :" << message_g_from_bloked_word << " dans le groupe "<< groupe->get_name() << " .";
+
+        for (Squidcien_session* destinataire : groupe->get_p_member()) {
+
+            if (destinataire) {
+                destinataire->sendMessage(message_g_from_bloked_word);
+            }
+        }
+    }
+
+}
+
+
+>>>>>>> Stashed changes
 void SquidServer::client_disconnected(QString user_name){
     Squidcien_session* session = qobject_cast<Squidcien_session*>(sender());
     //securiter pour ne pas sup 2 fois
@@ -140,10 +236,16 @@ void SquidServer::client_disconnected(QString user_name){
         session->deleteLater(); // libère la session proprement
     }
 }
+<<<<<<< Updated upstream
 // constriction  de grp optmiser pour ne pas copier les élemnt qui ne sont pas modifier
 void SquidServer::group_maker(const QString& admin, const QStringList& member_usernames, const QString& name)
 {
 // rappel les return dans un void c'est un nuke de la fonction
+=======
+
+void SquidServer::group_maker(const QString& admin, const QStringList& member_usernames, const QString& name)
+{
+>>>>>>> Stashed changes
     if (!User_autentifier.contains(admin))
         return;
 
@@ -155,7 +257,6 @@ void SquidServer::group_maker(const QString& admin, const QStringList& member_us
     QList<Squidcien_session*> member_sessions;
     QStringList unknown_members;
 
-    // connectés vs hors ligne
     for (const QString& username : member_usernames) {
         if (User_autentifier.contains(username))
             member_sessions.append(User_autentifier.value(username));
@@ -163,44 +264,83 @@ void SquidServer::group_maker(const QString& admin, const QStringList& member_us
             unknown_members.append(username);
     }
 
-    // aucun membre connecté
+    // Aucun membre connecté hors créateur
     if (member_sessions.isEmpty()) {
-        QString error = "Erreur : Au moins un membre connecté requis (hors créateur).";
-        sender_session->sendMessage(sender_session->sendError(error, "grp/create_error"));
+        sender_session->sendMessage(
+            sender_session->sendError(
+                "Erreur : Au moins un membre connecté requis (hors créateur).",
+                "grp/create_error"
+                )
+            );
         return;
     }
 
+<<<<<<< Updated upstream
     // nom de groupe déjà pris
+=======
+    // Nom vide
+    if (name.trimmed().isEmpty()) {
+        sender_session->sendMessage(
+            sender_session->sendError(
+                "Erreur : Le nom du groupe ne peut pas être vide.",
+                "grp/create_error"
+                )
+            );
+        return;
+    }
+
+    // Nom déjà pris
+>>>>>>> Stashed changes
     if (Group.contains(name)) {
-        QString error = "Erreur : Le nom du groupe est déjà pris.";
-        sender_session->sendMessage(sender_session->sendError(error, "grp/create_error"));
+        sender_session->sendMessage(
+            sender_session->sendError(
+                "Erreur : Le nom du groupe est déjà pris.",
+                "grp/create_error"
+                )
+            );
         return;
     }
 
-    // Création du groupe — l'admin est inclus comme membre
+    // Création — l'admin est inclus en tête de liste
     member_sessions.prepend(admin_session);
-    m_p_groupe = new squid_group(name, admin_session, member_sessions);
-    Group.insert(name, m_p_groupe);
+    squid_group* nouveau_groupe = new squid_group(name, admin_session, member_sessions);
+    Group.insert(name, nouveau_groupe);
+    m_p_groupe = nouveau_groupe;
 
-    // certains membres étaient hors ligne
-    if (!unknown_members.isEmpty()) {
-        QString warn = "Groupe créé, mais ces utilisateurs sont hors ligne : "
-                       + unknown_members.join(", ");
-        sender_session->sendMessage(sender_session->sendError(warn, "grp/create_warn"));
-        return;
+
+    QString ack = QJsonDocument(QJsonObject{
+                                    {"type",      "grp/create_ack"},
+                                    {"timestamp", QDateTime::currentDateTimeUtc().toString(Qt::ISODate)},
+                                    {"payload",   QJsonObject{
+                                                    {"group_name", name},
+                                                    {"status",     "ok"}
+                                                }}
+                                }).toJson(QJsonDocument::Compact);
+
+    for (Squidcien_session* member : nouveau_groupe->get_p_member()) {
+        if (member) {
+            member->sendMessage(ack);
+        }
     }
 
-    // ACK succès complet
-    QJsonObject payload;
-    payload["group_name"] = name;
-    payload["status"]     = "ok";
 
-    QJsonObject root;
-    root["type"]      = "grp/create_ack";
-    root["timestamp"] = QDateTime::currentDateTimeUtc().toString(Qt::ISODate);
-    root["payload"]   = payload;
+    QString info = admin_session->sendInfo_S(
+        "L'administrateur " + admin + " a créé le groupe.",
+        "group_created",
+        name
+        );
+    brodcast_message_group(info, name, admin_session);
 
-    sender_session->sendMessage(QJsonDocument(root).toJson(QJsonDocument::Compact));
+
+    if (!unknown_members.isEmpty()) {
+        sender_session->sendMessage(
+            sender_session->sendError(
+                "Groupe créé, mais ces utilisateurs sont hors ligne : "
+                    + unknown_members.join(", "),
+                "grp/create_warn"
+                )
+            );
+    }
 }
 
 void SquidServer::group_user_cleaner(Squidcien_session *session)
@@ -231,6 +371,40 @@ void SquidServer::group_user_cleaner(Squidcien_session *session)
         }
     }
 }
+<<<<<<< Updated upstream
+=======
+void SquidServer::on_group_leave_requested(QString user_name, QString group_name, Squidcien_session* session)
+{
+    // if nulptr
+    if (!session) {
+        qDebug() << "Erreur : Tentative de quitter le groupe avec une session nulle.";
+        return;
+    }
+
+    squid_group* groupe = Group.value(group_name, nullptr);
+    // if nulptr
+    if (!groupe) {
+        qDebug() << "Erreur : Le groupe" << group_name << "n'existe pas.";
+        return;
+    }
+
+    if (groupe->get_p_admin() == session) {
+        qDebug() << "L'admin" << user_name << "quitte le groupe" << group_name << "-> Dissolution.";
+        QString warn ="Erreur : L'administrateur a fermé le groupe.";
+        QString status= "group_closed";
+        brodcast_message_group(session->sendInfo_S(warn,status,groupe->get_name()),groupe->get_name(),session);
+        Group.remove(group_name);
+        groupe->deleteLater();
+    }
+    else {
+        qDebug() << "Le membre" << user_name << "quitte le groupe" << group_name;
+        QString warn ="Erreur : L'utilisateur "+session->get_user_name()+" a quitté le groupe.";
+        QString status= "user_leave";
+        brodcast_message_group(session->sendInfo_S(warn,status,groupe->get_name()),groupe->get_name(),session);
+        groupe->dell_member(session);
+    }
+}
+>>>>>>> Stashed changes
 void SquidServer::mp_message(QString message_mp, QString user_name_mptarget)
 {
     // 2. Recherche optimisée (ne parcourt l'arbre qu'une seule fois)
@@ -256,3 +430,146 @@ void SquidServer::mp_message(QString message_mp, QString user_name_mptarget)
         }
     }
 }
+<<<<<<< Updated upstream
+=======
+
+void SquidServer::add_b_word(QString b_word,QString group_name,Squidcien_session* session){
+
+    if (!session){
+        qDebug() << "L'user a l'inistiative de la demande de add_b_word c'est déconecter la demande a donc etais anuler";
+        return;
+    }
+    squid_group* p_groupe=Group.value(group_name);
+    if (!p_groupe){
+        qDebug() << "le groupe a etaite detrue ou n'a jamais exister .donc il est imposible d'envoyer un message dans le group";
+        return;
+    }
+    if (session==p_groupe->get_p_admin()){
+        p_groupe->add_b_words(b_word);
+        QString warn ="L'admin a ajouter "+b_word+" de la liste des contenue bloquer";
+        QString status= "word_blocked";
+        brodcast_message_group(session->sendInfo_S(warn,status,p_groupe->get_name()),p_groupe->get_name(),session);
+    }else{
+        QString reponc = "Erreur : Vous devez avoir les droits admin pour faire cela.";
+        QString type_ack = "grp/no_permit";
+        session->sendMessage(session->sendError(reponc,type_ack));
+    }
+}
+
+void SquidServer::dell_b_word(QString b_word,QString group_name,Squidcien_session* session){
+
+    if (!session){
+        qDebug() << "L'user a l'inistiative de la demande de dell_b_word c'est déconecter la demande a donc etais anuler";
+        return;
+    }
+    squid_group* p_groupe=Group.value(group_name);
+    if (!p_groupe){
+        qDebug() << "le groupe a etaite detrue ou n'a jamais exister .donc il est imposible d'envoyer un message dans le group";
+        return;
+    }
+    if (session==p_groupe->get_p_admin()){
+        p_groupe->dell_b_words(b_word);
+        QString warn ="L'admin a suprimée "+b_word+" de la liste des contenue bloquer";
+        QString status= "word_unblocked";
+        brodcast_message_group(session->sendInfo_S(warn,status,p_groupe->get_name()),p_groupe->get_name(),session);
+    }else{
+        QString reponc = "Erreur : Vous devez avoir les droits admin pour faire cela.";
+        QString type_ack = "grp/no_permit";
+        session->sendMessage(session->sendError(reponc,type_ack));
+    }
+}
+
+void SquidServer::grp_info (QString group_name,Squidcien_session* session){
+    if (!session){
+        qDebug() << "L'user a l'inistiative de la demande de grp_info c'est déconecter la demande a donc etais anuler";
+        return;
+    }
+
+    squid_group* p_groupe=Group.value(group_name);
+
+    if (!p_groupe){
+        qDebug() << "le groupe a etaite detrue ou n'a jamais exister .donc il est imposible d'envoyer un message dans le group";
+        return;
+    }
+    if (p_groupe->get_p_member().contains(session)){
+        session->sendMessage(p_groupe->get_grp_info());
+    }
+}
+
+void SquidServer::grp_admin_info(QString group_name, Squidcien_session* session) {
+    if (!session) {
+        qDebug() << "Erreur : Session invalide. L'admin s'est volatilisé avant la réponse.";
+        return;
+    }
+    squid_group* p_groupe = Group.value(group_name);
+
+    if (!p_groupe) {
+        qDebug() << "Erreur : Le groupe" << group_name << "est introuvable ou a été annihilé.";
+        return;
+    }
+    if (!(session==p_groupe->get_p_admin())){
+        QString reponc = "Erreur : Vous devez avoir les droits admin pour faire cela.";
+        QString type_ack = "grp/user_not_found";
+        session->sendMessage(session->sendError(reponc,type_ack));
+        return;
+
+    }
+
+
+
+    QJsonObject response;
+    response["type"] = "grp/admin_info_rep";
+    response["timestamp"] = QDateTime::currentDateTime().toString(Qt::ISODate);
+
+    QJsonObject payload;
+    payload["group_name"] = group_name;
+
+    QJsonArray membersArray;
+    for (Squidcien_session* member : p_groupe->get_p_member()) {
+        if(member){
+            membersArray.append(member->get_user_name());
+        }
+    }
+    payload["members"] = membersArray;
+
+    QJsonArray wordsArray = QJsonArray::fromStringList(p_groupe->get_b_words());
+    payload["words"] = wordsArray;
+
+    response["payload"] = payload;
+
+    session->sendMessage(QString::fromUtf8(QJsonDocument(response).toJson(QJsonDocument::Compact)));}
+
+void SquidServer::kick_user(QString taget_user, QString group_name, Squidcien_session *session)
+{
+    if (!session){
+        qDebug() << "L'user a l'inistiative de la demande de kick c'est déconecter la demande pour " << group_name << " a donc etais anuler";
+        return;
+    }
+    squid_group* p_groupe=Group.value(group_name);
+    if (!p_groupe){
+        qDebug() << "le groupe a etaite detrue ou n'a jamais exister .donc il est imposible d'envoyer un message dans le group";
+        return;
+    }
+
+
+    Squidcien_session* p_taget_user=User_autentifier.value(taget_user);
+
+    if (!p_taget_user){
+        qDebug() << "l'admin a demander de kick un suer qui n'égsite pas ";
+        QString reponc = "Erreur : L'utilisateur spécifié n'existe pas ou n'est pas connecté.";
+        QString type_ack = "grp/user_not_found";
+        session->sendMessage(session->sendError(reponc,type_ack));
+        return;
+    }
+    if (session==p_groupe->get_p_admin()){
+        p_groupe->dell_member(p_taget_user);
+        QString warn ="L'utilisateur "+taget_user+" a été expulsé par l'admin.";
+        QString status= "user_kicked";
+        brodcast_message_group(session->sendInfo_S(warn,status,p_groupe->get_name()),p_groupe->get_name(),session);
+    }else{
+        QString reponc = "Erreur : Vous devez avoir les droits admin pour faire cela.";
+        QString type_ack = "grp/no_permit";
+        session->sendMessage(session->sendError(reponc,type_ack));
+    }
+}
+>>>>>>> Stashed changes

@@ -47,3 +47,48 @@ void squid_group::dell_member(Squidcien_session * user)
     m_member.removeOne(user);
 }
 
+QString squid_group::get_grp_info() {
+
+    QStringList memberNames;
+    for (Squidcien_session* session : m_member) {
+        if (session) {
+            memberNames << session->get_user_name();
+        }
+    }
+
+    QJsonObject payload;
+    payload["group_name"] = m_nom;
+    payload["members"]    = QJsonArray::fromStringList(memberNames);
+    payload["admin"]      = m_admin->get_user_name();
+
+    QJsonObject root;
+    root["type"]      = "grp/info_rep";
+    root["timestamp"] = QDateTime::currentDateTimeUtc().toString(Qt::ISODate);
+    root["payload"]   = payload;
+
+    QString jsonString = QJsonDocument(root).toJson(QJsonDocument::Compact);
+
+    return jsonString;
+}
+
+
+QString squid_group::get_grp_admin_info() {
+
+    QStringList memberNames;
+
+    QJsonObject payload;
+    payload["group_name"] = m_nom;
+    payload["members"] = QJsonArray::fromStringList(memberNames);
+    payload["admin"] = m_admin->get_user_name();
+
+    payload["b_words"] = QJsonArray::fromStringList(b_words_list);
+
+    payload["member_count"] = m_member.length();
+
+    QJsonObject root;
+    root["type"] = "grp/admin_info_rep";
+    root["timestamp"] = QDateTime::currentDateTimeUtc().toString(Qt::ISODate);
+    root["payload"] = payload;
+
+    return QJsonDocument(root).toJson(QJsonDocument::Compact);
+}
