@@ -73,7 +73,7 @@ Le tout propulsé par une communication WebSocket entre un frontend web et un se
 
 ### Lancer le projet
 ```bash
-git clone https://github.com/m0bley-git/SquidTchat.git
+git clone https://github.com/sawlvl/SquidTchat.git
 cd SquidTchat
 docker compose -f docker/docker-compose.yml up --build
 ```

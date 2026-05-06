@@ -230,7 +230,7 @@ function normaliserGroupeSession(groupe) {
         words: Array.isArray(source.words) ? source.words : [],
         unread: Boolean(source.unread)
     };
-}
+} 
 
 function marquerNotifMessages() {
     sessionStorage.setItem("mp_notif", "1");
