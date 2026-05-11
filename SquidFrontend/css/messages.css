@@ -586,36 +586,7 @@ body.mode-groupe-active .group-kick-btn {
 }
 
 .chat-header {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 20px;
-    padding: 20px 24px;
-    background: linear-gradient(180deg, rgba(12, 14, 28, 0.96), rgba(12, 14, 28, 0.66), transparent);
-    z-index: 12;
-}
-
-.chat-header-main {
-    min-width: 0;
-}
-
-.chat-mode-label {
-    font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--text-soft);
-}
-
-.chat-title {
-    font-size: 28px;
-    font-weight: 700;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    display: none !important;
 }
 
 .messages {
@@ -624,7 +595,7 @@ body.mode-groupe-active .group-kick-btn {
     left: 0;
     right: 0;
     bottom: 72px;
-    padding: 92px 24px 18px 24px;
+    padding: 18px 24px;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
@@ -643,7 +614,6 @@ body.group-chat-layout .messages {
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    box-shadow: var(--shadow-soft);
 }
 
 .messages .moi {

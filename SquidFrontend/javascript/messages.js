@@ -366,7 +366,6 @@ function afficherEtatAttente(type) {
     zoneMessages.style.display = "none";
     zoneMessages.innerHTML = "";
     chatInputBar.style.display = "none";
-    chatHeader.style.display = "none";
     fermerPanneauGroupe();
 
     if (type === "groupe") {
@@ -567,15 +566,11 @@ function afficherConversation(cible, type) {
     if (type === "groupe") {
         const groupe = assurerGroupe(cible);
         body.classList.add("group-chat-layout");
-        chatHeader.style.display = "none";
         groupInfoToggle.style.display = "inline-flex";
         groupe.messages.forEach((message) => ajouterBulle(message.from, message.content, message.system));
         majPanneauInfos(cible);
     } else {
         body.classList.remove("group-chat-layout");
-        chatModeLabel.textContent = "Message prive";
-        chatTitle.textContent = cible;
-        chatHeader.style.display = "flex";
         groupInfoToggle.style.display = "none";
         conversations[cible].forEach((message) => ajouterBulle(message.from, message.content));
         fermerPanneauGroupe();
